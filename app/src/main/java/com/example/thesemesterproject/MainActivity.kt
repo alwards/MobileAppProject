@@ -30,7 +30,6 @@ class MainActivity : AppCompatActivity() {
     var player1 = 0
     var player2 = 0
 
-    var cardBackColor: String = "blue"
     var cardColor: String = "reg"
 
     var arrayOfCards = intArrayOf(
@@ -48,7 +47,6 @@ class MainActivity : AppCompatActivity() {
         R.drawable.cardclubsk,
         R.drawable.cardclubsa
     )
-
     var arrayOfDifCards = intArrayOf(
         R.drawable.card2,
         R.drawable.card3,
@@ -91,13 +89,8 @@ class MainActivity : AppCompatActivity() {
         iv_card1 = findViewById(R.id.iv_card1)
         iv_card2 = findViewById(R.id.iv_card2)
 
-
         iv_card1.setImageResource(R.drawable.cardbackblue1)
         iv_card2.setImageResource(R.drawable.cardbackblue1)
-
-
-
-
 
         tv_player1 = findViewById(R.id.tv_player1)
         tv_player2 = findViewById(R.id.tv_player2)
@@ -119,17 +112,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        fun testConsumePurchase(purchase: Purchase) {
-            val params = ConsumeParams.newBuilder()
-                .setPurchaseToken(purchase.purchaseToken).build()
-            billingClient.consumeAsync(params) { _, _, ->
-                print("consumed")
-            }
-        }
-
         val purchaseUpdateListener =
             PurchasesUpdatedListener { billingResult, purchases ->
-                print("****************************************Listening***************************")
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases != null) {
                     for (purchase in purchases) {
                         handlePurchase(purchase)
@@ -137,17 +121,8 @@ class MainActivity : AppCompatActivity() {
                     }
                 } else if (billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
                     // Handle an error caused by a user cancelling the purchase flow.
-                    print("****************************************Canceled?***************************")
-                    /*if (purchases != null) {
-                        for (purchase in purchases) {
-                            //handle purchase
-                            testConsumePurchase(purchase)
-                        }
-                    }*/
                 } else {
                     // Handle any other error codes.
-                    Log.d("fjdklsafjdslkfal", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                    Log.d("purchase", purchases?.size.toString())
                 }
             }
 
@@ -158,9 +133,6 @@ class MainActivity : AppCompatActivity() {
         connectToGooglePlayBilling()
     }
 
-
-
-
     fun connectToGooglePlayBilling(){
         billingClient.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
@@ -168,12 +140,8 @@ class MainActivity : AppCompatActivity() {
                     // The BillingClient is ready. You can query purchases here.
                     getProductDetails()
                     billingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP){billingResult, purchases->
-                        Log.d("fjkdfksks", "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
                         if(billingResult.responseCode == BillingClient.BillingResponseCode.OK){
-                            Log.d("bruh", "*****************************************************")
                             if(purchases != null){
-                                Log.d("Finally", "So it isn't null")
-                                Log.d("size: ", purchases.size.toString())
                                 for(item in purchases){
                                     if(item.skus.contains("green_back")){
                                         Log.d("contains green","green Contained")
@@ -186,17 +154,11 @@ class MainActivity : AppCompatActivity() {
                                     }
                                 }
 
-                            } else {
-                                Log.d("okay", "I see")
                             }
-
                         }else{
                             Log.d("Non-ok: ", billingResult.responseCode.toString())
                             }
                     }
-                    Log.d("after", "2222222222222222222222222222222222222222")
-
-
                 }
             }
             override fun onBillingServiceDisconnected() {
@@ -209,13 +171,6 @@ class MainActivity : AppCompatActivity() {
 
 
      fun handlePurchase(purchase: Purchase) {
-        // Purchase retrieved from BillingClient#queryPurchasesAsync or your PurchasesUpdatedListener.
-
-         //print(purchase.skus)
-        // Verify the purchase.
-        // Ensure entitlement was not already granted for this purchaseToken.
-        // Grant entitlement to the user.
-
         if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED) {
             if (!purchase.isAcknowledged) {
                 val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
@@ -225,20 +180,7 @@ class MainActivity : AppCompatActivity() {
                     val billingDebugMessage = billingResult.debugMessage
                 }
             }
-                /*if(purchase.skus[1] == "green_back" && purchase.purchaseState == Purchase.PurchaseState.PURCHASED){
-                    print("green")
-                    cardBackColor = "green"
-                    changeBacks()
-
-                }
-                if(purchase.skus[0] == "differe_card" && purchase.purchaseState == Purchase.PurchaseState.PURCHASED){
-                    print("change")
-                    cardColor = "dif"
-                    changeCards()
-                }*/
         }
-
-
     }
 
     fun getProductDetails(){
@@ -282,21 +224,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-             //leverage querySkuDetails Kotlin extension function
-            //val skuDetailsResult = withContext(Dispatchers.IO) {
-               //billingClient.querySkuDetails(params.build())
-            //}
-
-            // Process the result.
-            //if( skuDetailsResult == BillingClient.BillingResponseCode.OK
-              //  && skuDetailsResult != null){
-              //  var greenTextView: TextView = findViewById(R.id.greenText)
-              //  var greenButton: Button = findViewById(R.id.greenButton)
-               // var greenItemInfo: SkuDetails = skuDetailsResult.get(0)
-               // greenTextView.setText(greenItemInfo.title)
-              //  greenButton.setText(greenItemInfo.price)
-           // }
-
     }
     private fun setCardImage(number: Int, image: ImageView){
         if(cardColor == "reg") {
@@ -304,7 +231,5 @@ class MainActivity : AppCompatActivity() {
         }else{
             image.setImageResource(arrayOfDifCards[number])
         }
-
     }
-
 }
